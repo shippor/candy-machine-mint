@@ -6,7 +6,6 @@ import Alert from "@material-ui/lab/Alert";
 
 import * as anchor from "@project-serum/anchor";
 
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletDialogButton } from "@solana/wallet-adapter-material-ui";
@@ -16,16 +15,69 @@ import {
   awaitTransactionSignatureConfirmation,
   getCandyMachineState,
   mintOneToken,
-  shortenAddress,
 } from "./candy-machine";
 
-const ConnectButton = styled(WalletDialogButton)``;
+const ConnectButton = styled(WalletDialogButton)`
+  font-family: 'Poppins', sans-serif !important;
+  background:#877a76 !important;
+  box-shadow: 0px 0px 10px #fc384c;
+  font-size: 15px;
+  padding: 15px 50px !important;
+  font-weight: 600;
+  color: #E8E8E8 !important;
+  border-radius: 50px !important;
+  border: none;
+  justify-content: center !important;
+`;
+
+const Header = styled.h1`
+  font-size: 40px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 25px;
+  margin: 0;
+  color: #E8E8E8;
+  text-shadow: 2px 2px 3px #2a3c46;
+`;
+
+const MintContainer = styled.div`
+  display: flex;
+  height: 100vh;
+  padding: 0 20px;
+  justify-content: center;
+  align-items: center;
+  background-image: url(//cdn.shopify.com/s/files/1/0549/5203/4347/files/phc-hero-bg.png?v=1635037022);
+    background-color: #181818;
+    background-size: 30% auto;
+    background-position: top right;
+    background-repeat: no-repeat;
+`; // add your styles here
+
+const MintInformation = styled.div`
+  display: flex;
+  background: linear-gradient( 90deg,#3860FC 0%,#B31AB1 100%) !important;
+  flex-direction: column;
+  text-align: center;
+  padding: 42px 100px;
+  border: 1px solid #7C87B6;
+  border-radius: 15px;
+  font-size: 28px;
+`; // add your styles here
+
+const MintButton = styled(Button)`
+  font-family: 'Poppins', sans-serif !important;
+  background:#877a76 !important;
+  box-shadow: 0px 0px 10px #fc384c;
+  font-size: 15px;
+  padding: 15px 50px !important;
+  font-weight: 600;
+  color: #E8E8E8 !important;
+  border-radius: 50px !important;
+  border: none;
+  justify-content: center;
+`; // add your styles here
 
 const CounterText = styled.span``; // add your styles here
-
-const MintContainer = styled.div``; // add your styles here
-
-const MintButton = styled(Button)``; // add your styles here
 
 export interface HomeProps {
   candyMachineId: anchor.web3.PublicKey;
@@ -37,14 +89,13 @@ export interface HomeProps {
 }
 
 const Home = (props: HomeProps) => {
-  const [balance, setBalance] = useState<number>();
   const [isActive, setIsActive] = useState(false); // true when countdown completes
   const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
   const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
 
   const [itemsAvailable, setItemsAvailable] = useState(0);
   const [itemsRedeemed, setItemsRedeemed] = useState(0);
-  const [itemsRemaining, setItemsRemaining] = useState(0);
+  //const [itemsRemaining, setItemsRemaining] = useState(0);
 
   const [alertState, setAlertState] = useState<AlertState>({
     open: false,
@@ -74,7 +125,7 @@ const Home = (props: HomeProps) => {
       );
 
       setItemsAvailable(itemsAvailable);
-      setItemsRemaining(itemsRemaining);
+      //setItemsRemaining(itemsRemaining);
       setItemsRedeemed(itemsRedeemed);
 
       setIsSoldOut(itemsRemaining === 0);
@@ -143,7 +194,8 @@ const Home = (props: HomeProps) => {
     } finally {
       if (wallet) {
         const balance = await props.connection.getBalance(wallet.publicKey);
-        setBalance(balance / LAMPORTS_PER_SOL);
+        console.log(balance);
+        //setBalance(balance / LAMPORTS_PER_SOL);
       }
       setIsMinting(false);
       refreshCandyMachineState();
@@ -153,8 +205,8 @@ const Home = (props: HomeProps) => {
   useEffect(() => {
     (async () => {
       if (wallet) {
-        const balance = await props.connection.getBalance(wallet.publicKey);
-        setBalance(balance / LAMPORTS_PER_SOL);
+        //const balance = await props.connection.getBalance(wallet.publicKey);
+        //setBalance(balance / LAMPORTS_PER_SOL);
       }
     })();
   }, [wallet, props.connection]);
@@ -167,45 +219,45 @@ const Home = (props: HomeProps) => {
 
   return (
     <main>
-      {wallet && (
-        <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || "")}</p>
-      )}
-
-      {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
-
-      {wallet && <p>Total Available: {itemsAvailable}</p>}
-
-      {wallet && <p>Redeemed: {itemsRedeemed}</p>}
-
-      {wallet && <p>Remaining: {itemsRemaining}</p>}
 
       <MintContainer>
-        {!wallet ? (
-          <ConnectButton>Connect Wallet</ConnectButton>
-        ) : (
-          <MintButton
-            disabled={isSoldOut || isMinting || !isActive}
-            onClick={onMint}
-            variant="contained"
-          >
-            {isSoldOut ? (
-              "SOLD OUT"
-            ) : isActive ? (
-              isMinting ? (
-                <CircularProgress />
-              ) : (
-                "MINT"
-              )
-            ) : (
-              <Countdown
-                date={startDate}
-                onMount={({ completed }) => completed && setIsActive(true)}
-                onComplete={() => setIsActive(true)}
-                renderer={renderCounter}
-              />
-            )}
-          </MintButton>
-        )}
+      <MintInformation>
+          {!wallet ? (
+            <div>
+               <img src="//cdn.shopify.com/s/files/1/0549/5203/4347/files/logo_1_small.png?v=1634525019" alt="" title=""  data-description=""/>
+              <Header>Connect to Mint</Header>
+              <ConnectButton>Connect Wallet</ConnectButton>
+            </div>
+          ) : (
+            <div>
+              <img src="//cdn.shopify.com/s/files/1/0549/5203/4347/files/logo_1_small.png?v=1634525019" alt="" title=""  data-description=""/>
+              <Header>Mint</Header>
+              <p>Price - 0.49 SOL</p>
+              {wallet && <p>Minted - {itemsRedeemed} / {itemsAvailable}</p>}
+              <MintButton
+                  disabled={isSoldOut || isMinting || !isActive}
+                  onClick={onMint}
+                  variant="contained"
+              >
+                {isSoldOut ? (
+                    "SOLD OUT"
+                ) : isActive ? (
+                    isMinting ? (
+                        <CircularProgress />
+                    ) : (
+                        "MINT"
+                    )
+                ) : (
+                    <Countdown
+                        date={startDate}
+                        onMount={({ completed }) => completed && setIsActive(true)}
+                        onComplete={() => setIsActive(true)}
+                        renderer={renderCounter}
+                    />
+                )}
+              </MintButton>
+            </div>
+          )}</MintInformation>
       </MintContainer>
 
       <Snackbar
